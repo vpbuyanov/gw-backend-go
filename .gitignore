@@ -1,0 +1,15 @@
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+
+*.out
+
+vendor/
+
+go.work
+
+.env
+
+.idea/
