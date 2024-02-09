@@ -1,4 +1,4 @@
-module github.com/vpbuyanov/gw-backend-go
+module gw-backend-go
 
 go 1.21.6
 
