@@ -1,9 +1,8 @@
 package main
 
 import (
-	"github.com/vpbuyanov/gw-backend-go/internal/server"
-
 	"github.com/vpbuyanov/gw-backend-go/configs"
+	"github.com/vpbuyanov/gw-backend-go/internal/server"
 )
 
 func main() {

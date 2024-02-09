@@ -5,6 +5,7 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/vpbuyanov/gw-backend-go/configs"
+	"github.com/vpbuyanov/gw-backend-go/internal/handlers/http"
 )
 
 type server struct {
@@ -23,7 +24,10 @@ func (s *server) Start() error {
 	app := fiber.New()
 	app.Use(logger.New())
 
-	_ = app.Group("/api")
+	api := app.Group("/api")
+
+	routes := http.Routes{}
+	routes.RegisterRoutes(api)
 
 	return app.Listen(s.config.Server.Port)
 }
