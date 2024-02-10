@@ -5,6 +5,6 @@ services:
     build: .
     image: buyanse/gw-backend-go:latest
     container_name: gw-backend-go
-    ports:
-      - "8080:8080"
+    env_file:
+      - ../.env
     command: ["go", "run", "cmd", "migrate", "main.go"]
