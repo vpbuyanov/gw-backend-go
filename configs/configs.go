@@ -11,6 +11,7 @@ type (
 	Config struct {
 		Server   Server
 		Postgres Postgres
+		Redis    Redis
 	}
 
 	Server struct {
@@ -23,6 +24,13 @@ type (
 		User     string
 		Password string
 		DbName   string
+	}
+
+	Redis struct {
+		Port     string
+		Host     string
+		User     string
+		Password string
 	}
 )
 

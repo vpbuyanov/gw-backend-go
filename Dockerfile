@@ -14,6 +14,8 @@ FROM alpine:latest AS runner
 
 COPY --from=builder /usr/local/src/bin/app /
 COPY .env /
+COPY .postgres.env /
+COPY .redis.env /
 
 EXPOSE 8080
 
