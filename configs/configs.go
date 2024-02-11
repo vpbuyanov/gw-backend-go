@@ -9,11 +9,20 @@ import (
 
 type (
 	Config struct {
-		Server Server
+		Server   Server
+		Postgres Postgres
 	}
 
 	Server struct {
 		Port string
+	}
+
+	Postgres struct {
+		Port     string
+		Host     string
+		User     string
+		Password string
+		DbName   string
 	}
 )
 
@@ -23,11 +32,27 @@ func LoadConfig() Config {
 		log.Fatal("Error loading .env file")
 	}
 
-	port := os.Getenv("PORT")
+	serverPort := os.Getenv("PORT")
+
+	err = godotenv.Load(".postgres.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	pgUser := os.Getenv("POSTGRES_USER")
+	pgPass := os.Getenv("POSTGRES_PASSWORD")
+	pgDB := os.Getenv("POSTGRES_DB")
 
 	return Config{
 		Server: Server{
-			Port: port,
+			Port: serverPort,
+		},
+		Postgres: Postgres{
+			Port:     "5432",
+			Host:     "postgres",
+			Password: pgPass,
+			User:     pgUser,
+			DbName:   pgDB,
 		},
 	}
 }

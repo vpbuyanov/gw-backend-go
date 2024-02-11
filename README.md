@@ -24,9 +24,8 @@
 >> 3. ```make deploy```
 >
 > альтернативные шаги без установки make
->> 1. ```cd deploy```
->> 2. ```docker-compose build```
->> 3. ```docker-compose up```
+>> 1. ```docker-compose build```
+>> 2. ```docker-compose up```
 >
 
 

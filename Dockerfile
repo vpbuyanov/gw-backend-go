@@ -1,19 +1,20 @@
-FROM golang:1.21 AS builder
+FROM golang:1.21.6-alpine AS builder
 
-WORKDIR /app
+WORKDIR /usr/local/src
 
-COPY go.mod go.sum ./
+COPY ["../go.mod", "../go.sum", "./"]
 RUN go mod tidy
 RUN go mod download
 
-COPY . .
+COPY .. /usr/local/src
 
-RUN CGO_ENABLED=0 GOOS=linux go build -o /server cmd/main.go
+RUN go build -o ./bin/app cmd/api/main.go
 
-FROM alpine:3.18
+FROM alpine:latest AS runner
 
-WORKDIR /
+COPY --from=builder /usr/local/src/bin/app /
+COPY .env /
 
-COPY --from=builder /server /server
+EXPOSE 8080
 
-CMD ["/server"]
+CMD ["/app"]

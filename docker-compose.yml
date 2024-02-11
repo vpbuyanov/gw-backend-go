@@ -1,0 +1,35 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    restart: always
+    env_file:
+      - .postgres.env
+    volumes:
+      - ../2. Init Database:/docker-entrypoint-initdb.d
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      gw-backend-go:
+
+  gw-backend-go:
+    build: .
+    image: buyanse/gw-backend-go:latest
+    container_name: gw-backend-go
+    env_file:
+      - .env
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    networks:
+      gw-backend-go:
+
+volumes:
+  postgres-data:
+
+networks:
+  gw-backend-go:
