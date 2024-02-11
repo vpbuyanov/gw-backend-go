@@ -1,5 +1,4 @@
 deploy:
-	cd deploy
 	docker-compose build
 	docker-compose up
 
