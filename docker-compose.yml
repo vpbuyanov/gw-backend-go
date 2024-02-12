@@ -8,10 +8,22 @@ services:
     env_file:
       - .postgres.env
     volumes:
-      - ../2. Init Database:/docker-entrypoint-initdb.d
       - postgres-data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
+    networks:
+      gw-backend-go:
+
+  redis:
+    image: redis:latest
+    container_name: redis
+    restart: always
+    env_file:
+      - .redis.env
+    volumes:
+      - redis-data:/usr/local/etc/redis/redis.conf
+    ports:
+      - "6379:6379"
     networks:
       gw-backend-go:
 
@@ -25,10 +37,13 @@ services:
       - "8080:8080"
     depends_on:
       - postgres
+      - redis
     networks:
       gw-backend-go:
 
+
 volumes:
+  redis-data:
   postgres-data:
 
 networks:

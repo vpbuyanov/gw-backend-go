@@ -1,10 +1,13 @@
-package http
+package api
 
 import (
 	"github.com/gofiber/fiber/v2"
 )
 
-type Routes struct {
+type Routes struct{}
+
+func NewRoutes() Routes {
+	return Routes{}
 }
 
 func (routes *Routes) RegisterRoutes(app fiber.Router) {

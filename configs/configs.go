@@ -11,6 +11,7 @@ type (
 	Config struct {
 		Server   Server
 		Postgres Postgres
+		Redis    Redis
 	}
 
 	Server struct {
@@ -23,6 +24,13 @@ type (
 		User     string
 		Password string
 		DbName   string
+	}
+
+	Redis struct {
+		Port     string
+		Host     string
+		User     string
+		Password string
 	}
 )
 
@@ -43,6 +51,14 @@ func LoadConfig() Config {
 	pgPass := os.Getenv("POSTGRES_PASSWORD")
 	pgDB := os.Getenv("POSTGRES_DB")
 
+	err = godotenv.Load(".redis.env")
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	rdbUser := os.Getenv("REDIS_USER")
+	rdbPass := os.Getenv("REDIS_PASSWORD")
+
 	return Config{
 		Server: Server{
 			Port: serverPort,
@@ -53,6 +69,12 @@ func LoadConfig() Config {
 			Password: pgPass,
 			User:     pgUser,
 			DbName:   pgDB,
+		},
+		Redis: Redis{
+			Host:     "redis",
+			Port:     "6379",
+			User:     rdbUser,
+			Password: rdbPass,
 		},
 	}
 }
