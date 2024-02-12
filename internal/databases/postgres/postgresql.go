@@ -1,4 +1,4 @@
-package repos
+package postgres
 
 import (
 	"context"
@@ -9,24 +9,26 @@ import (
 	"github.com/vpbuyanov/gw-backend-go/configs"
 )
 
-type reposPg struct {
+type postgresql struct {
 	url    string
 	client *pgx.Conn
 	ctx    context.Context
 }
 
-type Pg interface {
+type Postgresql interface {
+	Connect() error
+	Close() error
 }
 
-func NewReposPg(configs configs.Postgres) Pg {
-	return &reposPg{
+func NewReposPostgresql(configs configs.Postgres) Postgresql {
+	return &postgresql{
 		ctx: context.Background(),
 		url: fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
 			configs.User, configs.Password, configs.Host, configs.Port, configs.DbName),
 	}
 }
 
-func (r *reposPg) connect() error {
+func (r *postgresql) Connect() error {
 	client, err := pgx.Connect(r.ctx, r.url)
 	if err != nil {
 		return err
@@ -36,27 +38,11 @@ func (r *reposPg) connect() error {
 	return nil
 }
 
-func (r *reposPg) close() error {
+func (r *postgresql) Close() error {
 	err := r.client.Close(r.ctx)
 	if err != nil {
 		return err
 	}
-
-	return nil
-}
-
-func (r *reposPg) InsertUser() error {
-	err := r.connect()
-	if err != nil {
-		return err
-	}
-
-	defer func(r *reposPg) {
-		err = r.close()
-		if err != nil {
-			return
-		}
-	}(r)
 
 	return nil
 }
