@@ -2,6 +2,7 @@ package main
 
 import (
 	"github.com/sirupsen/logrus"
+
 	"github.com/vpbuyanov/gw-backend-go/configs"
 	"github.com/vpbuyanov/gw-backend-go/internal/databases/postgres"
 	"github.com/vpbuyanov/gw-backend-go/internal/databases/redis"
