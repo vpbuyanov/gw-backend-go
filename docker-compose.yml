@@ -28,8 +28,7 @@ services:
       gw-backend:
 
   gw-backend-go:
-    build: .
-    image: buyanse/gw-backend-go:latest
+    image: vpbuyanov/gw-backend-go:latest
     container_name: gw-backend-go
     restart: unless-stopped
     env_file:
