@@ -34,5 +34,4 @@ func migrateUp(conf configs.Config) {
 	}
 
 	logrus.Println("migrations is up")
-	return
 }
