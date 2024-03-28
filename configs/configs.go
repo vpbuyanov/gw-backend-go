@@ -1,10 +1,10 @@
 package configs
 
 import (
-	"log"
 	"os"
 
 	"github.com/joho/godotenv"
+	"github.com/sirupsen/logrus"
 )
 
 type (
@@ -37,14 +37,14 @@ type (
 func LoadConfig() Config {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logrus.Fatal("Error loading .env file")
 	}
 
 	serverPort := os.Getenv("PORT")
 
 	err = godotenv.Load(".postgres.env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logrus.Fatal("Error loading .env file")
 	}
 
 	pgUser := os.Getenv("POSTGRES_USER")
@@ -53,7 +53,7 @@ func LoadConfig() Config {
 
 	err = godotenv.Load(".redis.env")
 	if err != nil {
-		log.Fatal("Error loading .env file")
+		logrus.Fatal("Error loading .env file")
 	}
 
 	rdbUser := os.Getenv("REDIS_USER")
