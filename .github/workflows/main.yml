@@ -71,6 +71,6 @@ jobs:
             
             docker rm gw-backend-go
             
-            docker pull ${{ secrets.DOCKER_USERNAME }}/gw-backend-go:latest
+            docker rmi -f $(docker images -aq)
             
             docker compose up -d
