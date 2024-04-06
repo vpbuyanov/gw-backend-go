@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         go-version:
-          - 1.21.7
+          - 1.22.1
 
     steps:
       - name: Setup Go ${{ matrix.go-version }}
@@ -71,6 +71,6 @@ jobs:
             
             docker rm gw-backend-go
             
-            docker pull ${{ secrets.DOCKER_USERNAME }}/gw-backend-go:latest
+            docker rmi -f $(docker images -aq)
             
             docker compose up -d
