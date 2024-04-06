@@ -4,8 +4,8 @@ go 1.22.1
 
 require (
 	github.com/go-redis/redis v6.15.9+incompatible
-	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/gofiber/fiber/v2 v2.52.4
+	github.com/golang-migrate/migrate/v4 v4.17.0
 	github.com/jackc/pgx/v5 v5.5.5
 	github.com/joho/godotenv v1.5.1
 	github.com/sirupsen/logrus v1.9.3
