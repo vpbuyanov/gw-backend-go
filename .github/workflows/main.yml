@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         go-version:
-          - 1.21.7
+          - 1.22.1
 
     steps:
       - name: Setup Go ${{ matrix.go-version }}
@@ -28,7 +28,7 @@ jobs:
         run: go mod download
 
       - name: Install Lint
-        run: sudo snap install golangci-lint
+        run: sudo snap install golangci-lint --classic
 
       - name: Lint
         run: golangci-lint run
@@ -45,7 +45,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASS }}
 
       - name: Push
-        uses: docker/build-push-action@v2
+        uses: docker/build-push-action@v3
         with:
           push: true
           platforms: linux/amd64

@@ -5,3 +5,8 @@ README.md
 .github
 
 .idea
+
+*.env
+
+Dockerfile
+docker-compose.yml
