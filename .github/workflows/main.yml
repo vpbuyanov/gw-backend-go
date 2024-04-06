@@ -28,7 +28,7 @@ jobs:
         run: go mod download
 
       - name: Install Lint
-        run: sudo snap install golangci-lint -y
+        run: sudo snap install golangci-lint --classic
 
       - name: Lint
         run: golangci-lint run
