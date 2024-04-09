@@ -5,6 +5,8 @@ services:
     image: postgres:latest
     container_name: postgres
     restart: unless-stopped
+    ports:
+      - "5432:5432"
     env_file:
       - .postgres.env
     volumes:
@@ -27,10 +29,12 @@ services:
     image: vpbuyanov/gw-backend-go:latest
     container_name: gw-backend-go
     restart: unless-stopped
-    env_file:
-      - .env
     ports:
       - "8080:8080"
+    env_file:
+      - .env
+      - .postgres.env
+      - .redis.env
     depends_on:
       - postgres
       - redis

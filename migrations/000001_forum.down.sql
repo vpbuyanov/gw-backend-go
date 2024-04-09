@@ -1,0 +1,3 @@
+DROP TABLE IF EXISTS "user";
+DROP TABLE IF EXISTS "forum_topic";
+DROP TABLE IF EXISTS "comment"

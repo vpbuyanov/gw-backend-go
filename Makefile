@@ -1,13 +1,15 @@
-deploy:
-	docker-compose build
-	docker-compose up
+create:
+	migrate create -ext sql -dir migrations -seq $(name)
 
-install docker:
-	sudo apt update
-	sudo apt install apt-transport-https ca-certificates curl software-properties-common
-	curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-	sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu focal stable"
-	sudo apt update
-	apt-cache policy docker-ce
-	sudo apt install docker-ce
-	sudo systemctl status docker
+up:
+	migrate -database ${POSTGRESQL_URL} -path migrations up
+
+down:
+	migrate -database ${POSTGRESQL_URL} -path migrations down
+
+deploy:
+	docker compose up -d
+
+dev:
+	docker build -t vpbuyanov/gw-backend-go:latest .
+	docker-compose up -d
