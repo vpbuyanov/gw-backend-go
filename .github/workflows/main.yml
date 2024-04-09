@@ -42,8 +42,7 @@ jobs:
         with:
           platforms: linux/amd64
           tags: ${{ secrets.DOCKER_USERNAME }}/gw-backend-go:latest
-          if: github.event_name == 'push'
-          push: true
+          push: if github.event_name == 'push'
 
   deploy:
     runs-on: ubuntu-latest
