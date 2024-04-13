@@ -1,6 +1,7 @@
 package main
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/golang-migrate/migrate/v4"
@@ -15,17 +16,18 @@ import (
 )
 
 func main() {
+	ctx := context.Background()
+
 	config := configs.LoadConfig()
 	runner := server.GetServer(config)
 
 	pg := postgres.NewReposPostgresql(config.Postgres)
 	dbRedis := redis.NewReposRedis(config.Redis)
 
-	err := pg.Connect()
+	err := pg.Connect(ctx)
 	if err != nil {
 		logrus.WithError(err).Println("can't connect to pg")
 	}
-	logrus.Println("pg connect")
 
 	migrateUP(config)
 
@@ -33,8 +35,6 @@ func main() {
 	if err != nil {
 		logrus.WithError(err).Println("can't connect to redis")
 	}
-
-	logrus.Println("redis connect")
 
 	err = runner.Start()
 	if err != nil {

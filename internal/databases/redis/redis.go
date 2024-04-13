@@ -1,7 +1,6 @@
 package redis
 
 import (
-	"context"
 	"fmt"
 
 	"github.com/go-redis/redis"
@@ -11,7 +10,6 @@ import (
 
 type redisDatabases struct {
 	url    string
-	ctx    context.Context
 	client *redis.Client
 }
 
@@ -26,14 +24,13 @@ func NewReposRedis(configs configs.Redis) Redis {
 
 	return &redisDatabases{
 		url: url,
-		ctx: context.Background(),
 	}
 }
 
 func (r *redisDatabases) Connect() error {
 	opt, err := redis.ParseURL(r.url)
 	if err != nil {
-		return err
+		return fmt.Errorf("could not parse redis url %s: %w", r.url, err)
 	}
 
 	r.client = redis.NewClient(opt)
@@ -43,7 +40,7 @@ func (r *redisDatabases) Connect() error {
 func (r *redisDatabases) Close() error {
 	err := r.client.Close()
 	if err != nil {
-		return err
+		return fmt.Errorf("could not close redis client: %w", err)
 	}
 
 	return nil
