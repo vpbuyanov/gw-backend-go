@@ -2,7 +2,6 @@ package postgres
 
 import (
 	"context"
-	"errors"
 	"fmt"
 
 	"github.com/jackc/pgx/v5"
@@ -51,10 +50,6 @@ func (r *postgresql) Query(ctx context.Context, request string, args ...string) 
 	query, err := r.client.Query(ctx, request, args)
 	if err != nil {
 		return nil, fmt.Errorf("could not execute query: %w", err)
-	}
-
-	if query == nil {
-		return nil, errors.New("no rows returned")
 	}
 
 	return query, nil
