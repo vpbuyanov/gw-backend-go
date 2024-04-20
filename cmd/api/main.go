@@ -1,37 +1,35 @@
 package main
 
 import (
+	"context"
+	"os"
+
 	"github.com/sirupsen/logrus"
 
 	"github.com/vpbuyanov/gw-backend-go/configs"
-	"github.com/vpbuyanov/gw-backend-go/internal/databases/postgres"
-	"github.com/vpbuyanov/gw-backend-go/internal/databases/redis"
-	"github.com/vpbuyanov/gw-backend-go/internal/server"
+	"github.com/vpbuyanov/gw-backend-go/internal/app"
 )
 
 func main() {
+	ctx := context.Background()
+
 	config := configs.LoadConfig()
-	runner := server.GetServer(config)
 
-	pg := postgres.NewReposPostgresql(config.Postgres)
-	dbRedis := redis.NewReposRedis(config.Redis)
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	err := pg.Connect()
-	if err != nil {
-		logrus.WithError(err).Println("can't connect to pg")
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
 	}
 
-	logrus.Println("pg connect")
-
-	err = dbRedis.Connect()
+	err := logger.Level.UnmarshalText([]byte(logLevel))
 	if err != nil {
-		logrus.WithError(err).Println("can't connect to redis")
+		logger.Panicf("failed to set log level: %v", err)
 	}
 
-	logrus.Println("redis connect")
+	logger.Infof("logger level set to %v", logLevel)
 
-	err = runner.Start()
-	if err != nil {
-		return
-	}
+	apps := app.New(logger, config)
+	apps.Run(ctx)
 }

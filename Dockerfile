@@ -13,9 +13,7 @@ RUN go build -o ./bin/app cmd/api/main.go
 FROM alpine:latest AS runner
 
 COPY --from=builder /usr/local/src/bin/app /
-COPY .env /
-COPY .postgres.env /
-COPY .redis.env /
+COPY migrations ./migrations
 
 EXPOSE 8080
 

@@ -1,4 +1,4 @@
-package api
+package http
 
 import (
 	"github.com/gofiber/fiber/v2"
@@ -6,7 +6,7 @@ import (
 
 type Routes struct{}
 
-func NewRoutes() Routes {
+func New() Routes {
 	return Routes{}
 }
 

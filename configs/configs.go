@@ -1,10 +1,7 @@
 package configs
 
 import (
-	"log"
 	"os"
-
-	"github.com/joho/godotenv"
 )
 
 type (
@@ -35,26 +32,11 @@ type (
 )
 
 func LoadConfig() Config {
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
 	serverPort := os.Getenv("PORT")
-
-	err = godotenv.Load(".postgres.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	pgUser := os.Getenv("POSTGRES_USER")
 	pgPass := os.Getenv("POSTGRES_PASSWORD")
 	pgDB := os.Getenv("POSTGRES_DB")
-
-	err = godotenv.Load(".redis.env")
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
 
 	rdbUser := os.Getenv("REDIS_USER")
 	rdbPass := os.Getenv("REDIS_PASSWORD")

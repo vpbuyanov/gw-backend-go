@@ -6,7 +6,5 @@ README.md
 
 .idea
 
-*.env
-
 Dockerfile
 docker-compose.yml
