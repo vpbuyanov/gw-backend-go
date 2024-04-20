@@ -14,17 +14,6 @@ services:
     networks:
       gw-backend:
 
-  redis:
-    image: redis:latest
-    container_name: redis
-    restart: unless-stopped
-    env_file:
-      - .redis.env
-    volumes:
-      - redis-data:/usr/local/etc/redis/redis.conf
-    networks:
-      gw-backend:
-
   gw-backend-go:
     image: vpbuyanov/gw-backend-go:latest
     container_name: gw-backend-go
@@ -37,12 +26,10 @@ services:
       - .redis.env
     depends_on:
       - postgres
-      - redis
     networks:
       gw-backend:
 
 volumes:
-  redis-data:
   postgres-data:
 
 networks:

@@ -2,61 +2,34 @@ package main
 
 import (
 	"context"
-	"fmt"
+	"os"
 
-	"github.com/golang-migrate/migrate/v4"
-	_ "github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
 	"github.com/sirupsen/logrus"
 
 	"github.com/vpbuyanov/gw-backend-go/configs"
-	"github.com/vpbuyanov/gw-backend-go/internal/databases/postgres"
-	"github.com/vpbuyanov/gw-backend-go/internal/databases/redis"
-	"github.com/vpbuyanov/gw-backend-go/internal/server"
+	"github.com/vpbuyanov/gw-backend-go/internal/app"
 )
 
 func main() {
 	ctx := context.Background()
 
 	config := configs.LoadConfig()
-	runner := server.GetServer(config)
 
-	pg := postgres.NewReposPostgresql(config.Postgres)
-	dbRedis := redis.NewReposRedis(config.Redis)
+	logger := logrus.New()
+	logger.SetFormatter(&logrus.JSONFormatter{})
 
-	err := pg.Connect(ctx)
-	if err != nil {
-		logrus.WithError(err).Println("can't connect to pg")
+	logLevel := os.Getenv("LOG_LEVEL")
+	if logLevel == "" {
+		logLevel = "info"
 	}
 
-	migrateUP(config)
-
-	err = dbRedis.Connect()
+	err := logger.Level.UnmarshalText([]byte(logLevel))
 	if err != nil {
-		logrus.WithError(err).Println("can't connect to redis")
+		logger.Panicf("failed to set log level: %v", err)
 	}
 
-	err = runner.Start()
-	if err != nil {
-		return
-	}
-}
+	logger.Infof("logger level set to %v", logLevel)
 
-func migrateUP(conf configs.Config) {
-	url := fmt.Sprintf("postgres://%s:%s@%s:%s/%s?sslmode=disable",
-		conf.Postgres.User, conf.Postgres.Password, conf.Postgres.Host, conf.Postgres.Port, conf.Postgres.DbName)
-
-	m, err := migrate.New(
-		"file://migrations",
-		url)
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	err = m.Up()
-	if err != nil {
-		logrus.Fatal(err)
-	}
-
-	logrus.Println("migrations is up")
+	apps := app.New(logger, config)
+	apps.Run(ctx)
 }
