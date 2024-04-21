@@ -23,7 +23,6 @@ services:
     env_file:
       - .env
       - .postgres.env
-      - .redis.env
     depends_on:
       - postgres
     networks:

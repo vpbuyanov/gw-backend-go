@@ -15,6 +15,4 @@ FROM alpine:latest AS runner
 COPY --from=builder /usr/local/src/bin/app /
 COPY migrations ./migrations
 
-EXPOSE 8080
-
 CMD ["/app"]

@@ -11,3 +11,5 @@ vendor/
 go.work
 
 .idea/
+
+/*.env
