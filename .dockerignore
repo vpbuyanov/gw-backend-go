@@ -1,10 +1,15 @@
-Makefile
-
 README.md
 
 .github
+.gitignore
 
 .idea
 
 Dockerfile
 docker-compose.yml
+Makefile
+
+/*.env
+
+vendor/
+go.work
