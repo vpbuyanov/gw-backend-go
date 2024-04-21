@@ -8,6 +8,7 @@ import (
 
 type UserRepos interface {
 	CreateUser(ctx context.Context, user models.User) (*models.User, error)
+
 	CreateAdmin(ctx context.Context, user models.User) (*models.User, error)
 	SelectUserByID(ctx context.Context, id string) (*models.User, error)
 }
