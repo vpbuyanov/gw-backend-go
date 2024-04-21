@@ -65,9 +65,17 @@ func (u *user) SelectUserByID(ctx context.Context, id string) (*models.User, err
 		return nil, fmt.Errorf("can not scan user for create db: %w", err)
 	}
 
-	if getUser == nil || len(getUser.UUID) == 0 {
-		return nil, errors.New("no user in databases")
+	return getUser, nil
+}
+
+func (u *user) DeleteUser(ctx context.Context, id string) error {
+	query := u.db.QueryRow(ctx, DeleteUser, id)
+	var getUser *models.User
+
+	err := query.Scan(&getUser)
+	if err != nil {
+		return fmt.Errorf("can not scan user for delete db: %w", err)
 	}
 
-	return getUser, nil
+	return nil
 }
