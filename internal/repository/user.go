@@ -77,5 +77,5 @@ func (u *user) DeleteUser(ctx context.Context, id string) error {
 		return fmt.Errorf("can not scan user for delete db: %w", err)
 	}
 
-	return getUser, nil
+	return nil
 }
