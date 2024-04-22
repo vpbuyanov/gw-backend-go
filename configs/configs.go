@@ -30,10 +30,6 @@ func LoadConfig() Config {
 	pgPass := os.Getenv("POSTGRES_PASSWORD")
 	pgDB := os.Getenv("POSTGRES_DB")
 
-	if serverPort == "" || pgUser == "" || pgPass == "" || pgDB == "" {
-		panic("Missing environment variables")
-	}
-
 	return Config{
 		Server: Server{
 			Port: serverPort,
