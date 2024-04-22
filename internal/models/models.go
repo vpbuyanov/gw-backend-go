@@ -7,3 +7,7 @@ type User struct {
 	HashPass string `json:"hash_pass"`
 	IsAdmin  bool   `json:"is_admin"`
 }
+
+type GetUser struct {
+	ID string `json:"id"`
+}

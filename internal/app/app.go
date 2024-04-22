@@ -47,7 +47,7 @@ func (a *App) Run(ctx context.Context) {
 		userUC,
 	)
 
-	err = runner.Start()
+	err = runner.Start(ctx)
 	if err != nil {
 		a.log.Panicf("failed to start server: %v", err)
 	}
@@ -60,13 +60,10 @@ func (a *App) migrations(url string) {
 	}
 
 	err = m.Up()
-	if err != nil {
-		if !errors.Is(err, migrate.ErrNoChange) {
-			a.log.Panicf("failed to run migrations: %v", err)
-		}
-		a.log.Info("no change in migrations")
+	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
+		a.log.Panicf("failed to run migrations: %v", err)
 		return
 	}
 
-	a.log.Info("migrations is up")
+	a.log.Info("init migrations completed")
 }

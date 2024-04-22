@@ -6,8 +6,9 @@ import (
 
 type (
 	Config struct {
-		Server   Server
-		Postgres Postgres
+		Server
+		Postgres
+		JWT
 	}
 
 	Server struct {
@@ -20,6 +21,10 @@ type (
 		User     string
 		Password string
 		DbName   string
+	}
+
+	JWT struct {
+		Secret string
 	}
 )
 
