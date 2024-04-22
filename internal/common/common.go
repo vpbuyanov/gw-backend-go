@@ -1,17 +1,24 @@
 package common
 
 import (
-	"crypto/sha1"
+	"fmt"
+
+	"golang.org/x/crypto/bcrypt"
 )
 
-func CreateHash(text string) string {
-	sha := sha1.New()
+func CreateHashPassword(password string) (string, error) {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", fmt.Errorf("create hashed password was failed: %v", err.Error())
+	}
 
-	sha.Write([]byte(text))
-
-	return string(sha.Sum(nil))
+	return string(hashPassword), nil
 }
 
-func CheckHash(text string, salt string) bool {
-	return true
+func CompareHashAndPassword(hash, password string) (bool, error) {
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
