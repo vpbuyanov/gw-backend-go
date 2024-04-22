@@ -62,9 +62,10 @@ func (r *Routes) GetUser(ctx *fiber.Ctx) error {
 
 	getUser, err := r.UserUC.GetUser(r.ctx, user.ID)
 	if err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(struct {
-			Error string `json:"error"`
-		}{err.Error()})
+		return ctx.Status(http.StatusBadRequest).
+			JSON(struct {
+				Error string `json:"error"`
+			}{err.Error()})
 	}
 
 	if getUser == nil || getUser.UUID == "" {
