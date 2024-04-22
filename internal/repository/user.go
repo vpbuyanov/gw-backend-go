@@ -10,11 +10,11 @@ import (
 )
 
 const (
-	CreateUser        = `INSERT INTO "user" (name, email, hash_pass) VALUES(?, ?, ?) RETURNING *`
-	SelectUserByID    = `SELECT * FROM "user" WHERE id=?`
-	SelectUserByEmail = `SELECT * FROM "user" WHERE email=?`
-	UpdateUser        = `UPDATE "user" SET name=?, email=?, hash_pass=?, is_admin=? WHERE id=? RETURNING *`
-	DeleteUser        = `DELETE FROM "user" WHERE id=? RETURNING *`
+	CreateUser        = `INSERT INTO "user" (name, email, hash_pass) VALUES($1, $2, $2) RETURNING *`
+	SelectUserByID    = `SELECT * FROM "user" WHERE id=$1`
+	SelectUserByEmail = `SELECT * FROM "user" WHERE email=$1`
+	UpdateUser        = `UPDATE "user" SET name=$1, email=$2, hash_pass=$3, is_admin=$4 WHERE id=$5 RETURNING *`
+	DeleteUser        = `DELETE FROM "user" WHERE id=$1 RETURNING *`
 )
 
 type user struct {
