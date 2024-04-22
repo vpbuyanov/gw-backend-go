@@ -66,6 +66,8 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           port: 22
           script: |
+            cd gw
+            
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             
             docker stop gw-backend-go

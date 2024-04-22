@@ -2,6 +2,7 @@ package server
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/vpbuyanov/gw-backend-go/configs"
 	"github.com/vpbuyanov/gw-backend-go/internal/handlers/http"
@@ -26,6 +27,7 @@ func GetServer(config configs.Config, userUC usecase.UserUC) Server {
 
 func (s *server) Start() error {
 	app := fiber.New()
+	app.Use(logger.New())
 
 	api := app.Group("/api")
 
