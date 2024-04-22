@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS "user" (
       name VARCHAR(50) NOT NULL,
       email VARCHAR(100) NOT NULL,
       hash_pass VARCHAR(250) NOT NULL,
-      is_admin BOOLEAN NOT NULL DEFAULT FALSE
+      is_admin BOOLEAN DEFAULT FALSE
 );
 
 CREATE TABLE IF NOT EXISTS "forum_topic" (
