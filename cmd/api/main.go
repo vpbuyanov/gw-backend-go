@@ -12,7 +12,6 @@ import (
 
 func main() {
 	ctx := context.Background()
-
 	config := configs.LoadConfig()
 
 	logger := logrus.New()
@@ -30,6 +29,6 @@ func main() {
 
 	logger.Infof("logger level set to %v", logLevel)
 
-	apps := app.New(logger, config)
-	apps.Run(ctx)
+	application := app.New(logger, config)
+	application.Run(ctx)
 }

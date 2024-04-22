@@ -8,7 +8,6 @@ type (
 	Config struct {
 		Server   Server
 		Postgres Postgres
-		Redis    Redis
 	}
 
 	Server struct {
@@ -22,13 +21,6 @@ type (
 		Password string
 		DbName   string
 	}
-
-	Redis struct {
-		Port     string
-		Host     string
-		User     string
-		Password string
-	}
 )
 
 func LoadConfig() Config {
@@ -38,8 +30,9 @@ func LoadConfig() Config {
 	pgPass := os.Getenv("POSTGRES_PASSWORD")
 	pgDB := os.Getenv("POSTGRES_DB")
 
-	rdbUser := os.Getenv("REDIS_USER")
-	rdbPass := os.Getenv("REDIS_PASSWORD")
+	if serverPort == "" || pgUser == "" || pgPass == "" || pgDB == "" {
+		panic("Missing environment variables")
+	}
 
 	return Config{
 		Server: Server{
@@ -51,12 +44,6 @@ func LoadConfig() Config {
 			Password: pgPass,
 			User:     pgUser,
 			DbName:   pgDB,
-		},
-		Redis: Redis{
-			Host:     "redis",
-			Port:     "6379",
-			User:     rdbUser,
-			Password: rdbPass,
 		},
 	}
 }
