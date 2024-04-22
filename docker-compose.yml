@@ -16,7 +16,7 @@ services:
 
   backend-go:
     image: vpbuyanov/gw-backend-go:latest
-    container_name: backend-go
+    container_name: gw-backend-go
     restart: unless-stopped
     ports:
       - "8080:8080"
