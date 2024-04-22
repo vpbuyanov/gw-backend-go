@@ -2,10 +2,11 @@ package http
 
 import (
 	"context"
+	"net/http"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/vpbuyanov/gw-backend-go/internal/models"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
-	"net/http"
 )
 
 type Routes struct {

@@ -3,6 +3,7 @@ package repository
 import (
 	"context"
 	"fmt"
+
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"github.com/vpbuyanov/gw-backend-go/internal/models"

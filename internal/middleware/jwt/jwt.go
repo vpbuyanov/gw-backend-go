@@ -3,13 +3,13 @@ package JWT
 import (
 	"errors"
 	"fmt"
-	"github.com/vpbuyanov/gw-backend-go/configs"
 	"net/http"
 	"time"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v4"
 
+	"github.com/vpbuyanov/gw-backend-go/configs"
 	"github.com/vpbuyanov/gw-backend-go/internal/models"
 )
 
