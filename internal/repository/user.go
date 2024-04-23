@@ -35,8 +35,7 @@ func (u *user) CreateUser(ctx context.Context, user models.User) (*models.User, 
 			&res.Name,
 			&res.Email,
 			&res.HashPass,
-			&res.IsAdmin,
-		)
+			&res.IsAdmin)
 
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for db: %w", err)
@@ -46,21 +45,20 @@ func (u *user) CreateUser(ctx context.Context, user models.User) (*models.User, 
 }
 
 func (u *user) UpdateUser(ctx context.Context, user models.User, isAdmin bool) (*models.User, error) {
-	var getUser *models.User
+	var getUser models.User
 	err := u.db.QueryRow(ctx, UpdateUser, user.Name, user.Email, user.HashPass, isAdmin).
 		Scan(
 			&getUser.UUID,
 			&getUser.Name,
 			&getUser.Email,
 			&getUser.HashPass,
-			&getUser.IsAdmin,
-		)
+			&getUser.IsAdmin)
 
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for update db: %w", err)
 	}
 
-	return getUser, nil
+	return &getUser, nil
 }
 
 func (u *user) SelectUserByID(ctx context.Context, id string) (*models.User, error) {
@@ -71,8 +69,7 @@ func (u *user) SelectUserByID(ctx context.Context, id string) (*models.User, err
 			&getUser.Name,
 			&getUser.Email,
 			&getUser.HashPass,
-			&getUser.IsAdmin,
-		)
+			&getUser.IsAdmin)
 
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for create db: %w", err)
@@ -82,24 +79,34 @@ func (u *user) SelectUserByID(ctx context.Context, id string) (*models.User, err
 }
 
 func (u *user) SelectUserByEmail(ctx context.Context, email string) (*models.User, error) {
-	query := u.db.QueryRow(ctx, SelectUserByEmail, email)
-	var getUser *models.User
-	err := query.Scan(&getUser)
+	var getUser models.User
+	err := u.db.QueryRow(ctx, SelectUserByEmail, email).Scan(
+		&getUser.UUID,
+		&getUser.Name,
+		&getUser.Email,
+		&getUser.HashPass,
+		&getUser.IsAdmin)
+
 	if err != nil {
 		return nil, fmt.Errorf("can not select user by email: %w", err)
 	}
 
-	return getUser, nil
+	return &getUser, nil
 }
 
 func (u *user) DeleteUser(ctx context.Context, id string) (*models.User, error) {
-	query := u.db.QueryRow(ctx, DeleteUser, id)
-	var getUser *models.User
+	var getUser models.User
+	err := u.db.QueryRow(ctx, DeleteUser, id).
+		Scan(
+			&getUser.UUID,
+			&getUser.Name,
+			&getUser.Email,
+			&getUser.HashPass,
+			&getUser.IsAdmin)
 
-	err := query.Scan(&getUser)
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for delete db: %w", err)
 	}
 
-	return getUser, nil
+	return &getUser, nil
 }
