@@ -24,7 +24,7 @@ func New(ctx context.Context, uc usecase.UserUC) Routes {
 func (r *Routes) RegisterRoutes(app fiber.Router) {
 	app.Get("/ping", r.Ping)
 	app.Post("/create_user", r.CreateUser)
-	app.Get("/get_user", r.GetUser)
+	app.Post("/get_user", r.GetUser)
 }
 
 func (r *Routes) Ping(ctx *fiber.Ctx) error {
