@@ -28,22 +28,34 @@ func New(db *pgxpool.Pool) UserRepos {
 }
 
 func (u *user) CreateUser(ctx context.Context, user models.User) (*models.User, error) {
-	query := u.db.QueryRow(ctx, CreateUser, user.Name, user.Email, user.HashPass)
+	var res models.User
+	err := u.db.QueryRow(ctx, CreateUser, user.Name, user.Email, user.HashPass).
+		Scan(
+			&res.UUID,
+			&res.Name,
+			&res.Email,
+			&res.HashPass,
+			&res.IsAdmin,
+		)
 
-	var res *models.User
-	err := query.Scan(&res)
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for db: %w", err)
 	}
 
-	return res, nil
+	return &res, nil
 }
 
 func (u *user) UpdateUser(ctx context.Context, user models.User, isAdmin bool) (*models.User, error) {
-	query := u.db.QueryRow(ctx, UpdateUser, user.Name, user.Email, user.HashPass, isAdmin)
-
 	var getUser *models.User
-	err := query.Scan(&getUser)
+	err := u.db.QueryRow(ctx, UpdateUser, user.Name, user.Email, user.HashPass, isAdmin).
+		Scan(
+			&getUser.UUID,
+			&getUser.Name,
+			&getUser.Email,
+			&getUser.HashPass,
+			&getUser.IsAdmin,
+		)
+
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for update db: %w", err)
 	}
@@ -52,15 +64,21 @@ func (u *user) UpdateUser(ctx context.Context, user models.User, isAdmin bool) (
 }
 
 func (u *user) SelectUserByID(ctx context.Context, id string) (*models.User, error) {
-	query := u.db.QueryRow(ctx, SelectUserByID, id)
-	var getUser *models.User
+	var getUser models.User
+	err := u.db.QueryRow(ctx, SelectUserByID, id).
+		Scan(
+			&getUser.UUID,
+			&getUser.Name,
+			&getUser.Email,
+			&getUser.HashPass,
+			&getUser.IsAdmin,
+		)
 
-	err := query.Scan(&getUser)
 	if err != nil {
 		return nil, fmt.Errorf("can not scan user for create db: %w", err)
 	}
 
-	return getUser, nil
+	return &getUser, nil
 }
 
 func (u *user) SelectUserByEmail(ctx context.Context, email string) (*models.User, error) {

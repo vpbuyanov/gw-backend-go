@@ -23,8 +23,10 @@ func New(ctx context.Context, uc usecase.UserUC) Routes {
 
 func (r *Routes) RegisterRoutes(app fiber.Router) {
 	app.Get("/ping", r.Ping)
+
 	app.Post("/create_user", r.CreateUser)
-	app.Post("/get_user", r.GetUser)
+	app.Get("/get_user_by_id", r.GetUserByID)
+	app.Get("/get_user_by_email", r.GetUserByID)
 }
 
 func (r *Routes) Ping(ctx *fiber.Ctx) error {
@@ -51,17 +53,16 @@ func (r *Routes) CreateUser(ctx *fiber.Ctx) error {
 	return ctx.JSON(createUser)
 }
 
-func (r *Routes) GetUser(ctx *fiber.Ctx) error {
-	var user models.GetUser
-	err := ctx.BodyParser(&user)
-	if err != nil {
+func (r *Routes) GetUserByID(ctx *fiber.Ctx) error {
+	id := ctx.Query("id")
+	if id == "" {
 		return ctx.Status(http.StatusBadRequest).
 			JSON(struct {
 				Error string `json:"error"`
-			}{"can not parse body"})
+			}{"id is required query parameter"})
 	}
 
-	getUser, err := r.UserUC.GetUser(r.ctx, user.ID)
+	getUser, err := r.UserUC.GetUser(r.ctx, id)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).
 			JSON(struct {
