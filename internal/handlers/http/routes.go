@@ -25,8 +25,9 @@ func (r *Routes) RegisterRoutes(app fiber.Router) {
 	app.Get("/ping", r.Ping)
 
 	app.Post("/create_user", r.CreateUser)
+	app.Post("/login", r.Login)
 	app.Get("/get_user_by_id", r.GetUserByID)
-	app.Get("/get_user_by_email", r.GetUserByID)
+
 }
 
 func (r *Routes) Ping(ctx *fiber.Ctx) error {
@@ -75,4 +76,27 @@ func (r *Routes) GetUserByID(ctx *fiber.Ctx) error {
 	}
 
 	return ctx.JSON(getUser)
+}
+
+func (r *Routes) Login(ctx *fiber.Ctx) error {
+	var user models.User
+	err := ctx.BodyParser(&user)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).
+			JSON(struct {
+				Error string `json:"error"`
+			}{"can not parse body"})
+	}
+
+	ok, err := r.UserUC.Login(r.ctx, user.Email, user.HashPass)
+	if err != nil {
+		return ctx.Status(http.StatusBadRequest).
+			JSON(struct {
+				Error string `json:"error"`
+			}{err.Error()})
+	}
+
+	return ctx.JSON(struct {
+		OK bool `json:"ok"`
+	}{ok})
 }

@@ -2,8 +2,6 @@ package usecase
 
 import (
 	"context"
-	"errors"
-
 	"github.com/sirupsen/logrus"
 
 	"github.com/vpbuyanov/gw-backend-go/internal/common"
@@ -77,23 +75,19 @@ func (u *userUC) GetUser(ctx context.Context, id string) (*models.User, error) {
 	return user, nil
 }
 
-func (u *userUC) Login(ctx context.Context, email string, password string) (*models.User, error) {
+func (u *userUC) Login(ctx context.Context, email string, password string) (bool, error) {
 	const funcName = "Login UserUC"
 
 	user, err := u.repos.SelectUserByEmail(ctx, email)
 	if err != nil {
 		u.log.Errorf("[%v] can not select user by email: %v", funcName, err.Error())
-		return nil, err
+		return false, err
 	}
 
 	ok, err := common.CompareHashAndPassword(user.HashPass, password)
 	if err != nil {
-		return nil, err
+		return false, err
 	}
 
-	if !ok {
-		return nil, errors.New("invalid password")
-	}
-
-	return user, nil
+	return ok, nil
 }
