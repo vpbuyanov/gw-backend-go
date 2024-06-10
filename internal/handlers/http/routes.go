@@ -1,102 +1,41 @@
 package http
 
 import (
-	"context"
-	"net/http"
-
 	"github.com/gofiber/fiber/v2"
-	"github.com/vpbuyanov/gw-backend-go/internal/models"
+
+	"github.com/vpbuyanov/gw-backend-go/internal/middleware"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
 )
 
 type Routes struct {
-	ctx context.Context
-	usecase.UserUC
+	userUC *usecase.UserUC
 }
 
-func New(ctx context.Context, uc usecase.UserUC) Routes {
+func New(userUC *usecase.UserUC) Routes {
 	return Routes{
-		ctx:    ctx,
-		UserUC: uc,
+		userUC: userUC,
 	}
 }
 
 func (r *Routes) RegisterRoutes(app fiber.Router) {
 	app.Get("/ping", r.Ping)
 
-	app.Post("/create_user", r.CreateUser)
-	app.Post("/login", r.Login)
-	app.Get("/get_user_by_id", r.GetUserByID)
+	user := app.Group("/user")
+	admin := app.Group("/admin")
 
+	user.Post("/login", r.Login)
+	user.Post("/registration", r.Registration)
+
+	authUser := user.Group("/auth", middleware.CompareToken)
+	authUser.Post("/create_admin", r.CreateAdmin)
+	authUser.Get("/get_user_by_id", r.GetUserByID)
+
+	admin.Post("/login")
+
+	authAdmin := admin.Group("/auth", middleware.CompareAdminToken)
+	authAdmin.Post("/update_user")
 }
 
 func (r *Routes) Ping(ctx *fiber.Ctx) error {
 	return ctx.SendString("ok")
-}
-
-func (r *Routes) CreateUser(ctx *fiber.Ctx) error {
-	var user models.User
-	err := ctx.BodyParser(&user)
-	if err != nil {
-		return ctx.Status(http.StatusBadRequest).
-			JSON(struct {
-				Error string `json:"error"`
-			}{"can not parse body"})
-	}
-
-	createUser, err := r.UserUC.CreateUser(r.ctx, user)
-	if err != nil {
-		return ctx.Status(http.StatusBadRequest).JSON(struct {
-			Error string `json:"error"`
-		}{err.Error()})
-	}
-
-	return ctx.JSON(createUser)
-}
-
-func (r *Routes) GetUserByID(ctx *fiber.Ctx) error {
-	id := ctx.Query("id")
-	if id == "" {
-		return ctx.Status(http.StatusBadRequest).
-			JSON(struct {
-				Error string `json:"error"`
-			}{"id is required query parameter"})
-	}
-
-	getUser, err := r.UserUC.GetUser(r.ctx, id)
-	if err != nil {
-		return ctx.Status(http.StatusBadRequest).
-			JSON(struct {
-				Error string `json:"error"`
-			}{err.Error()})
-	}
-
-	if getUser == nil || getUser.UUID == "" {
-		return ctx.Status(http.StatusNoContent).JSON(struct{}{})
-	}
-
-	return ctx.JSON(getUser)
-}
-
-func (r *Routes) Login(ctx *fiber.Ctx) error {
-	var user models.User
-	err := ctx.BodyParser(&user)
-	if err != nil {
-		return ctx.Status(http.StatusBadRequest).
-			JSON(struct {
-				Error string `json:"error"`
-			}{"can not parse body"})
-	}
-
-	ok, err := r.UserUC.Login(r.ctx, user.Email, user.HashPass)
-	if err != nil {
-		return ctx.Status(http.StatusBadRequest).
-			JSON(struct {
-				Error string `json:"error"`
-			}{err.Error()})
-	}
-
-	return ctx.JSON(struct {
-		OK bool `json:"ok"`
-	}{ok})
 }

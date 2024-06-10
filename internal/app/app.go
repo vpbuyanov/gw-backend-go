@@ -2,68 +2,48 @@ package app
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
-	"github.com/golang-migrate/migrate/v4"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sirupsen/logrus"
 
-	"github.com/vpbuyanov/gw-backend-go/configs"
-	"github.com/vpbuyanov/gw-backend-go/internal/repository"
+	"github.com/vpbuyanov/gw-backend-go/internal/configs"
+	"github.com/vpbuyanov/gw-backend-go/internal/configure"
+	"github.com/vpbuyanov/gw-backend-go/internal/logger"
 	"github.com/vpbuyanov/gw-backend-go/internal/server"
+	"github.com/vpbuyanov/gw-backend-go/internal/storage/postgresql"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
 )
 
 type App struct {
-	log *logrus.Logger
-	cfg configs.Config
+	cfg *configs.Config
 }
 
-func New(log *logrus.Logger, cfg configs.Config) *App {
+func New(cfg *configs.Config) *App {
 	return &App{
-		log: log,
 		cfg: cfg,
 	}
 }
 
 func (a *App) Run(ctx context.Context) {
-	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-		a.cfg.Postgres.User, a.cfg.Postgres.Password, a.cfg.Postgres.Host, a.cfg.Postgres.Port, a.cfg.Postgres.DbName)
+	dbPool := configure.Postgres(ctx, a.cfg.Postgres)
+	defer dbPool.Close()
 
-	pool, err := pgxpool.New(ctx, url)
-	if err != nil {
-		a.log.Panicf("failed to connect to postgres: %v", err)
+	if err := a.cfg.Postgres.MigrationsUp(); err != nil && err.Error() != "no change" {
+		panic(err)
 	}
-	a.migrations(url)
 
-	repos := repository.New(pool)
-	userUC := usecase.NewUserUC(a.log, repos)
+	logger.InitLogger(a.cfg.Logger)
 
-	runner := server.GetServer(
+	repos := postgresql.NewUserRepos(dbPool)
+	userUC := usecase.NewUserUC(repos)
+
+	runner := server.New(
 		a.cfg,
 		userUC,
 	)
 
-	err = runner.Start(ctx)
+	err := runner.Start(ctx)
 	if err != nil {
-		a.log.Panicf("failed to start server: %v", err)
+		logger.Log.Panicf("failed to start server: %v", err)
 	}
-}
-
-func (a *App) migrations(url string) {
-	m, err := migrate.New("file://migrations", url)
-	if err != nil {
-		a.log.Panicf("failed to init migrations: %v", err)
-	}
-
-	err = m.Up()
-	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		a.log.Panicf("failed to run migrations: %v", err)
-		return
-	}
-
-	a.log.Info("init migrations completed")
 }

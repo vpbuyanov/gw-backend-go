@@ -6,35 +6,34 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 
-	"github.com/vpbuyanov/gw-backend-go/configs"
+	"github.com/vpbuyanov/gw-backend-go/internal/configs"
 	"github.com/vpbuyanov/gw-backend-go/internal/handlers/http"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
 )
 
-type server struct {
-	config configs.Config
-	userUC usecase.UserUC
+type Server struct {
+	config *configs.Config
+	userUC *usecase.UserUC
 }
 
-type Server interface {
-	Start(ctx context.Context) error
-}
-
-func GetServer(config configs.Config, userUC usecase.UserUC) Server {
-	return &server{
+func New(config *configs.Config, userUC *usecase.UserUC) *Server {
+	return &Server{
 		config: config,
 		userUC: userUC,
 	}
 }
 
-func (s *server) Start(ctx context.Context) error {
+func (s *Server) Start(ctx context.Context) error {
 	app := fiber.New()
-	app.Use(logger.New())
+	app.Use(logger.New(logger.Config{
+		TimeZone:   "Europe/Moscow",
+		TimeFormat: "2 Jan 2006 15:04:05",
+	}))
 
 	api := app.Group("/api")
 
-	routes := http.New(ctx, s.userUC)
+	routes := http.New(s.userUC)
 	routes.RegisterRoutes(api)
 
-	return app.Listen(s.config.Server.Port)
+	return app.Listen(s.config.Server.String())
 }
