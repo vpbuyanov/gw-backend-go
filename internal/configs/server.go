@@ -3,8 +3,8 @@ package configs
 import "fmt"
 
 type Server struct {
-	Port int    `yaml:"port"`
 	Host string `yaml:"host"`
+	Port int    `yaml:"port"`
 }
 
 func (s Server) String() string {

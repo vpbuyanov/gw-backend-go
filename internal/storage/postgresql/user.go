@@ -35,7 +35,7 @@ func (u *UserRepos) InsertUser(ctx context.Context, user entity.RegistrationUser
 
 	transaction, err := u.db.Begin(ctx)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can not start transaction, err: %w", err)
 	}
 
 	defer func() {
@@ -56,13 +56,13 @@ func (u *UserRepos) InsertUser(ctx context.Context, user entity.RegistrationUser
 	}
 
 	if err = transaction.Commit(ctx); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can not commit transaction, err: %w", err)
 	}
 
 	return &res, nil
 }
 
-func (u *UserRepos) UpdateUser(ctx context.Context, user models.User) (*models.User, error) {
+func (u *UserRepos) UpdateUser(ctx context.Context, user *models.User) (*models.User, error) {
 	const (
 		query = `
 			UPDATE "user" SET name=$1, email=$2,
@@ -146,7 +146,7 @@ func (u *UserRepos) IsAdmin(ctx context.Context, id string) (bool, error) {
 	var isAdmin bool
 	err := u.db.QueryRow(ctx, query, id).Scan(&isAdmin)
 	if err != nil {
-		return false, err
+		return false, fmt.Errorf("error query row, err: %w", err)
 	}
 
 	return isAdmin, nil

@@ -11,10 +11,10 @@ import (
 
 type Postgres struct {
 	Host     string `yaml:"host"`
-	Port     int    `yaml:"port"`
 	User     string `yaml:"user"`
 	Password string `yaml:"password"`
 	DBName   string `yaml:"dbname"`
+	Port     int    `yaml:"port"`
 }
 
 func (p *Postgres) String() string {
@@ -33,19 +33,19 @@ func (p *Postgres) String() string {
 	return u.String()
 }
 
-func (p *Postgres) MigrationsUp(url ...string) error {
+func (p *Postgres) MigrationsUp(urls ...string) error {
 	var sourceURL string
-	if url == nil {
+	if urls == nil {
 		sourceURL = "file://migrations"
 	} else {
-		sourceURL = url[0]
+		sourceURL = urls[0]
 	}
 	m, err := migrate.New(sourceURL, p.String())
 	if err != nil {
-		return err
+		return fmt.Errorf("can not create New migrate, err: %w", err)
 	}
-	if err = m.Up(); err != nil {
-		return err
+	if err = m.Up(); err != nil && err.Error() != "no change" {
+		return fmt.Errorf("can not UP migrate, err: %w", err)
 	}
 
 	return nil

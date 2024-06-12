@@ -8,6 +8,7 @@ import (
 
 const (
 	ErrorSendRequest = "can not send request, err: %v"
+	ErrorNext        = "can not call Next(), err: %v"
 	ErrorParseBody   = "can not parse body"
 )
 
@@ -17,7 +18,7 @@ type errorsRequest struct {
 	Status  int    `json:"status"`
 }
 
-func BindByError(ctx *fiber.Ctx, status int, message string, customError error) {
+func ErrorWithAbort(ctx *fiber.Ctx, status int, message string, customError error) {
 	err := ctx.Status(status).JSON(errorsRequest{
 		Error:   customError,
 		Message: message,

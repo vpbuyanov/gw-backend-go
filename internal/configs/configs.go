@@ -9,10 +9,10 @@ import (
 
 type Config struct {
 	Server   Server   `yaml:"server"`
-	Postgres Postgres `yaml:"postgres"`
 	Kafka    Kafka    `yaml:"kafka"`
-	JWT      JWT      `yaml:"jwt"`
 	Logger   Logger   `yaml:"logger"`
+	JWT      JWT      `yaml:"jwt"`
+	Postgres Postgres `yaml:"postgres"`
 }
 
 func New() *Config {

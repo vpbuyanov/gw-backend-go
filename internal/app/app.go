@@ -28,7 +28,7 @@ func (a *App) Run(ctx context.Context) {
 	dbPool := configure.Postgres(ctx, a.cfg.Postgres)
 	defer dbPool.Close()
 
-	if err := a.cfg.Postgres.MigrationsUp(); err != nil && err.Error() != "no change" {
+	if err := a.cfg.Postgres.MigrationsUp(); err != nil {
 		panic(err)
 	}
 

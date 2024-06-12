@@ -3,6 +3,8 @@ package http
 import (
 	"github.com/gofiber/fiber/v2"
 
+	"github.com/vpbuyanov/gw-backend-go/internal/entity"
+	"github.com/vpbuyanov/gw-backend-go/internal/logger"
 	"github.com/vpbuyanov/gw-backend-go/internal/middleware"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
 )
@@ -37,5 +39,11 @@ func (r *Routes) RegisterRoutes(app fiber.Router) {
 }
 
 func (r *Routes) Ping(ctx *fiber.Ctx) error {
-	return ctx.SendString("ok")
+	err := ctx.SendString("ok")
+	if err != nil {
+		logger.Log.Errorf(entity.ErrorSendRequest, err)
+		return nil
+	}
+
+	return nil
 }

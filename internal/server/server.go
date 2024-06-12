@@ -4,10 +4,11 @@ import (
 	"context"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gofiber/fiber/v2/middleware/logger"
+	flogger "github.com/gofiber/fiber/v2/middleware/logger"
 
 	"github.com/vpbuyanov/gw-backend-go/internal/configs"
 	"github.com/vpbuyanov/gw-backend-go/internal/handlers/http"
+	"github.com/vpbuyanov/gw-backend-go/internal/logger"
 	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
 )
 
@@ -25,7 +26,7 @@ func New(config *configs.Config, userUC *usecase.UserUC) *Server {
 
 func (s *Server) Start(ctx context.Context) error {
 	app := fiber.New()
-	app.Use(logger.New(logger.Config{
+	app.Use(flogger.New(flogger.Config{
 		TimeZone:   "Europe/Moscow",
 		TimeFormat: "2 Jan 2006 15:04:05",
 	}))
@@ -35,5 +36,11 @@ func (s *Server) Start(ctx context.Context) error {
 	routes := http.New(s.userUC)
 	routes.RegisterRoutes(api)
 
-	return app.Listen(s.config.Server.String())
+	err := app.Listen(s.config.Server.String())
+	if err != nil {
+		logger.Log.Errorf("err Listen: %v", err)
+		return nil
+	}
+
+	return nil
 }

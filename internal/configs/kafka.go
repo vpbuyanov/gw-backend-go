@@ -8,8 +8,8 @@ import (
 type Kafka struct {
 	User     string `yaml:"user"`
 	Host     string `yaml:"host"`
-	Port     int64  `yaml:"port"`
 	Password string `yaml:"password"`
+	Port     int64  `yaml:"port"`
 }
 
 func (p *Kafka) String() string {
