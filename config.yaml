@@ -1,0 +1,26 @@
+postgres:
+  host: postgres
+  port: 5432
+  user: postgres
+  password: postgres
+  dbname: postgres
+
+redis:
+  host:
+  port:
+  password:
+  DB:
+
+kafka:
+  host:
+  port:
+  user:
+  password:
+
+server:
+  port: 8080
+  host: 0.0.0.0
+
+JWT:
+  secret: asd
+  secret_reset: asdd

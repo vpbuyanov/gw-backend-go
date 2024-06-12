@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   postgres:
     image: postgres:latest
@@ -14,21 +12,35 @@ services:
     networks:
       gw:
 
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    restart: unless-stopped
+    ports:
+      - "29092:29092"
+    env_file:
+      - .kafka.env
+    volumes:
+      - kafka-data:/var/lib/kafka/data
+    networks:
+      gw:
+
   backend-go:
     image: vpbuyanov/gw-backend-go:latest
     container_name: gw-backend-go
     restart: unless-stopped
     ports:
-      - "8080:8080"
-    env_file:
-      - .env
-      - .postgres.env
+      - "127.0.0.1:8080:8080"
+    volumes:
+      - server-data:/var/lib/server/data
     depends_on:
       - postgres
     networks:
       gw:
 
 volumes:
+  kafka-data:
+  server-data:
   postgres-data:
 
 networks:
