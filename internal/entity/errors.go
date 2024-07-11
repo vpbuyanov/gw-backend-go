@@ -1,0 +1,17 @@
+package entity
+
+import "errors"
+
+const (
+	ErrorParseBody = "can not parse body"
+)
+
+var (
+	ErrorRefreshTokenExpire = errors.New("expire refresh token")
+)
+
+type ErrorsRequest struct {
+	Error   string `json:"error"`
+	Message string `json:"message"`
+	Status  int    `json:"status"`
+}

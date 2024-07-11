@@ -13,3 +13,9 @@ go.work
 .idea/
 
 /*.env
+
+golangci-lint
+
+/deploy/*.env
+/deploy/config.yaml
+

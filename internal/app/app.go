@@ -2,68 +2,89 @@ package app
 
 import (
 	"context"
-	"errors"
-	"fmt"
 
-	"github.com/golang-migrate/migrate/v4"
+	"github.com/gofiber/fiber/v2"
 	_ "github.com/golang-migrate/migrate/v4/database/postgres"
 	_ "github.com/golang-migrate/migrate/v4/source/file"
-	"github.com/jackc/pgx/v5/pgxpool"
-	"github.com/sirupsen/logrus"
 
-	"github.com/vpbuyanov/gw-backend-go/configs"
-	"github.com/vpbuyanov/gw-backend-go/internal/repository"
-	"github.com/vpbuyanov/gw-backend-go/internal/server"
-	"github.com/vpbuyanov/gw-backend-go/internal/usecase"
+	mailerBroker "github.com/vpbuyanov/gw-backend-go/internal/broker/mailer"
+	"github.com/vpbuyanov/gw-backend-go/internal/configs"
+	"github.com/vpbuyanov/gw-backend-go/internal/configure"
+	handle "github.com/vpbuyanov/gw-backend-go/internal/handlers/user"
+	"github.com/vpbuyanov/gw-backend-go/internal/logger"
+	"github.com/vpbuyanov/gw-backend-go/internal/middleware/log"
+	"github.com/vpbuyanov/gw-backend-go/internal/middleware/token"
+	"github.com/vpbuyanov/gw-backend-go/internal/models"
+	"github.com/vpbuyanov/gw-backend-go/internal/service"
+	"github.com/vpbuyanov/gw-backend-go/internal/storage/postgresql"
+	"github.com/vpbuyanov/gw-backend-go/internal/storage/redis"
+	"github.com/vpbuyanov/gw-backend-go/internal/usecase/mailer"
+	redisUC "github.com/vpbuyanov/gw-backend-go/internal/usecase/redis"
+	"github.com/vpbuyanov/gw-backend-go/internal/usecase/user"
+)
+
+const (
+	sizeBufferChannel = 256
 )
 
 type App struct {
-	log *logrus.Logger
-	cfg configs.Config
+	cfg *configs.Config
 }
 
-func New(log *logrus.Logger, cfg configs.Config) *App {
+func New(cfg *configs.Config) *App {
 	return &App{
-		log: log,
 		cfg: cfg,
 	}
 }
 
 func (a *App) Run(ctx context.Context) {
-	url := fmt.Sprintf("postgres://%v:%v@%v:%v/%v?sslmode=disable",
-		a.cfg.Postgres.User, a.cfg.Postgres.Password, a.cfg.Postgres.Host, a.cfg.Postgres.Port, a.cfg.Postgres.DbName)
+	app := fiber.New()
+	app.Use(log.New())
 
-	pool, err := pgxpool.New(ctx, url)
-	if err != nil {
-		a.log.Panicf("failed to connect to postgres: %v", err)
-	}
-	a.migrations(url)
+	logger.InitLogger(a.cfg.Logger)
 
-	repos := repository.New(pool)
-	userUC := usecase.NewUserUC(a.log, repos)
+	// DB
+	dbPool := configure.Postgres(ctx, a.cfg.Postgres)
+	defer dbPool.Close()
 
-	runner := server.GetServer(
-		a.cfg,
-		userUC,
-	)
-
-	err = runner.Start(ctx)
-	if err != nil {
-		a.log.Panicf("failed to start server: %v", err)
-	}
-}
-
-func (a *App) migrations(url string) {
-	m, err := migrate.New("file://migrations", url)
-	if err != nil {
-		a.log.Panicf("failed to init migrations: %v", err)
+	if err := a.cfg.Postgres.MigrationsUp(); err != nil {
+		logger.Log.Errorf("can not up migration in postgres, err: %v", err)
 	}
 
-	err = m.Up()
-	if err != nil && !errors.Is(err, migrate.ErrNoChange) {
-		a.log.Panicf("failed to run migrations: %v", err)
+	redisDB := configure.Redis(a.cfg.Redis)
+
+	// Channel
+	channelMailer := make(chan models.Gmail, sizeBufferChannel)
+
+	// Repos
+	userRepos := postgresql.NewUserRepos(dbPool)
+	redisRepos := redis.NewTokenRepos(redisDB)
+
+	// UseCase
+	ucUser := user.NewUCUser(userRepos)
+	ucMailer := mailer.New(a.cfg.Mailer, channelMailer)
+	ucRedis := redisUC.NewUCRepos(redisRepos)
+
+	// Broker
+	brokerMailer := mailerBroker.NewBrokerMailer(ucMailer, channelMailer)
+
+	// Handler
+	userHandler := handle.NewHandleUser(ucUser, ucRedis)
+
+	// endpoint
+	api := app.Group("/api")
+
+	users := api.Group("/user")
+
+	users.Post("/registration", userHandler.Registration, token.SignedToken)
+	users.Post("/login", userHandler.Login, token.SignedToken)
+
+	// Run
+	service.RegisterBroker(brokerMailer.Run)
+
+	err := app.Listen(a.cfg.Server.String())
+	if err != nil {
+		logger.Log.Errorf("err Listen: %v", err)
 		return
 	}
-
-	a.log.Info("init migrations completed")
 }
