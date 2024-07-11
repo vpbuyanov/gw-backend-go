@@ -32,10 +32,8 @@ func New(cfg configs.Mailer, channelBroker chan models.Gmail) *Mailer {
 }
 
 func (m *Mailer) SendEmailToBroker(gmail models.Gmail) error {
-	select {
-	case m.channelBroker <- gmail:
-		return nil
-	}
+	m.channelBroker <- gmail
+	return nil
 }
 
 func (m *Mailer) SendEmail(gmail models.Gmail) error {

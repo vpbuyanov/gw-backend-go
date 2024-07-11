@@ -1,12 +1,12 @@
 package user
 
 import (
-	"github.com/vpbuyanov/gw-backend-go/internal/models"
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
 
 	"github.com/vpbuyanov/gw-backend-go/internal/entity"
+	"github.com/vpbuyanov/gw-backend-go/internal/models"
 )
 
 type Handle struct {
