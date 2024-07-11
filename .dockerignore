@@ -13,3 +13,5 @@ Makefile
 
 vendor/
 go.work
+
+/deploy

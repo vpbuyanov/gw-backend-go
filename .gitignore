@@ -15,3 +15,7 @@ go.work
 /*.env
 
 golangci-lint
+
+/deploy/*.env
+/deploy/config.yaml
+

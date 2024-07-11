@@ -9,17 +9,18 @@ import (
 
 type Config struct {
 	Server   Server   `yaml:"server"`
-	Kafka    Kafka    `yaml:"kafka"`
-	Logger   Logger   `yaml:"logger"`
-	JWT      JWT      `yaml:"jwt"`
+	Redis    Redis    `yaml:"redis"`
+	Logger   Logger   `yaml:"log"`
+	JWT      JWT      `yaml:"token"`
 	Postgres Postgres `yaml:"postgres"`
+	Mailer   Mailer   `yaml:"mailer"`
 }
 
 func New() *Config {
 	return &Config{
 		Server:   Server{},
 		Postgres: Postgres{},
-		Kafka:    Kafka{},
+		Redis:    Redis{},
 		JWT:      JWT{},
 		Logger:   Logger{},
 	}
@@ -29,10 +30,8 @@ func MustConfig(p *string) *Config {
 	var path string
 	if p == nil {
 		path = fetchConfigPath()
-	}
-
-	if path == "" {
-		path = "./config.yaml"
+	} else {
+		path = *p
 	}
 
 	if _, ok := os.Stat(path); os.IsNotExist(ok) {
@@ -52,7 +51,7 @@ func fetchConfigPath() string {
 	var res string
 
 	// --config="path/to/config.yaml"
-	flag.StringVar(&res, "config", "", "path to config")
+	flag.StringVar(&res, "config", "./config.yaml", "path to config")
 	flag.Parse()
 
 	if res == "" {

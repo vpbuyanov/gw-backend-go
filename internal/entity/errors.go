@@ -1,32 +1,17 @@
 package entity
 
-import (
-	"github.com/gofiber/fiber/v2"
-
-	"github.com/vpbuyanov/gw-backend-go/internal/logger"
-)
+import "errors"
 
 const (
-	ErrorSendRequest = "can not send request, err: %v"
-	ErrorNext        = "can not call Next(), err: %v"
-	ErrorParseBody   = "can not parse body"
+	ErrorParseBody = "can not parse body"
 )
 
-type errorsRequest struct {
-	Error   error  `json:"error"`
+var (
+	ErrorRefreshTokenExpire = errors.New("expire refresh token")
+)
+
+type ErrorsRequest struct {
+	Error   string `json:"error"`
 	Message string `json:"message"`
 	Status  int    `json:"status"`
-}
-
-func ErrorWithAbort(ctx *fiber.Ctx, status int, message string, customError error) {
-	err := ctx.Status(status).JSON(errorsRequest{
-		Error:   customError,
-		Message: message,
-		Status:  status,
-	})
-
-	if err != nil {
-		logger.Log.Errorf(ErrorSendRequest, err)
-		return
-	}
 }
