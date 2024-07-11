@@ -22,7 +22,7 @@ func NewHandleUser(userUC userUC, redisUC redisUC) *Handle {
 }
 
 func (r *Handle) Registration(ctx *fiber.Ctx) error {
-	var data entity.RegistrationUserRequest
+	var data registrationUserRequest
 	err := ctx.BodyParser(&data)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(
@@ -33,14 +33,14 @@ func (r *Handle) Registration(ctx *fiber.Ctx) error {
 			})
 	}
 
-	var user models.User
-	user.Name = data.Name
-	user.Surname = data.Surname
-	user.Phone = data.Phone
-	user.Email = data.Email
-	user.HashPass = data.Password
+	id, err := r.userUC.Registration(ctx.Context(), models.User{
+		Phone:    data.Phone,
+		Email:    data.Email,
+		HashPass: data.Password,
+		Name:     data.Name,
+		Surname:  data.Surname,
+	})
 
-	id, err := r.userUC.Registration(ctx.Context(), user)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(entity.ErrorsRequest{
 			Error:   err.Error(),
@@ -58,7 +58,7 @@ func (r *Handle) Registration(ctx *fiber.Ctx) error {
 }
 
 func (r *Handle) Login(ctx *fiber.Ctx) error {
-	var user entity.LoginUserRequest
+	var user loginUserRequest
 	err := ctx.BodyParser(&user)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(entity.ErrorsRequest{
@@ -68,7 +68,7 @@ func (r *Handle) Login(ctx *fiber.Ctx) error {
 		})
 	}
 
-	getUser, err := r.userUC.Login(ctx.Context(), user.Email, user.HashPass)
+	getUser, err := r.userUC.Login(ctx.Context(), user.Email, user.Password)
 	if err != nil {
 		return ctx.Status(http.StatusBadRequest).JSON(entity.ErrorsRequest{
 			Error:   err.Error(),

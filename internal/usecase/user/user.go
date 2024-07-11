@@ -4,9 +4,8 @@ import (
 	"context"
 	"errors"
 	"fmt"
-
-	"github.com/vpbuyanov/gw-backend-go/internal/common"
 	"github.com/vpbuyanov/gw-backend-go/internal/models"
+	"golang.org/x/crypto/bcrypt"
 )
 
 type UCUser struct {
@@ -20,7 +19,7 @@ func NewUCUser(user userRepos) *UCUser {
 }
 
 func (u *UCUser) Registration(ctx context.Context, request models.User) (*int, error) {
-	pass, err := common.CreateHashPassword(request.HashPass)
+	pass, err := u.createHashPassword(request.HashPass)
 	if err != nil {
 		return nil, err
 	}
@@ -41,10 +40,27 @@ func (u *UCUser) Login(ctx context.Context, email, password string) (*models.Use
 		return nil, fmt.Errorf("user not found: %w", err)
 	}
 
-	err = common.CompareHashAndPassword(user.HashPass, password)
+	err = u.compareHashAndPassword(user.HashPass, password)
 	if err != nil {
 		return nil, errors.New("wrong password or email")
 	}
 
 	return user, nil
+}
+
+func (u *UCUser) createHashPassword(password string) (string, error) {
+	hashPassword, err := bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+	if err != nil {
+		return "", fmt.Errorf("create hashed password was failed: %v", err.Error())
+	}
+
+	return string(hashPassword), nil
+}
+
+func (u *UCUser) compareHashAndPassword(hash, password string) error {
+	if err := bcrypt.CompareHashAndPassword([]byte(hash), []byte(password)); err != nil {
+		return fmt.Errorf("compare is wrong, err: %w", err)
+	}
+
+	return nil
 }

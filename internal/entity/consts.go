@@ -2,7 +2,7 @@ package entity
 
 const (
 
-	// Tokens
+	// Tokens.
 	LenRefreshToken          = 32
 	ExpiresMinuteAccessToken = 15
 	ExpiresDayRefreshToken   = 30

@@ -12,7 +12,7 @@ func Redis(cfg configs.Redis) *redis.Client {
 	redisCl := redis.NewClient(&redis.Options{
 		Addr:     fmt.Sprintf("%s:%v", cfg.Host, cfg.Port),
 		Password: cfg.Password,
-		DB:       cfg.DB,
+		DB:       int(cfg.DB),
 	})
 
 	return redisCl

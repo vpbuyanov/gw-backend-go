@@ -2,6 +2,7 @@ package redis
 
 import (
 	"context"
+	"strconv"
 
 	"github.com/redis/go-redis/v9"
 
@@ -19,7 +20,7 @@ func NewTokenRepos(redisCli *redis.Client) *TokenRepos {
 }
 
 func (t *TokenRepos) SaveRefreshToken(ctx context.Context, userID int, refreshToken string) {
-	t.cli.Set(ctx, refreshToken, userID, entity.ExpiresDayRefreshToken)
+	t.cli.Set(ctx, strconv.Itoa(userID), refreshToken, entity.ExpiresDayRefreshToken)
 }
 
 func (t *TokenRepos) GetIDByRefreshToken(ctx context.Context, refreshToken string) *int {

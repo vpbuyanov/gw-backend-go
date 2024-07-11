@@ -8,13 +8,37 @@ import (
 )
 
 type Config struct {
+	Postgres Postgres `yaml:"postgres"`
 	Server   Server   `yaml:"server"`
 	Redis    Redis    `yaml:"redis"`
-	Logger   Logger   `yaml:"log"`
-	JWT      JWT      `yaml:"token"`
-	Postgres Postgres `yaml:"postgres"`
 	Mailer   Mailer   `yaml:"mailer"`
+	JWT      JWT      `yaml:"token"`
+	Logger   Logger   `yaml:"log"`
 }
+
+type (
+	JWT struct {
+		SecretAuth  string `yaml:"secret"`
+		SecretReset string `yaml:"secret_reset"`
+	}
+
+	Logger struct {
+		LogLevel string `yaml:"log_level"`
+	}
+
+	Mailer struct {
+		Name              string `yaml:"name"`
+		FromEmailAddress  string `yaml:"from_email_address"`
+		FromEmailPassword string `yaml:"from_email_password"`
+	}
+
+	Redis struct {
+		Host     string `yaml:"host"`
+		Port     string `yaml:"port"`
+		Password string `yaml:"password"`
+		DB       int64  `yaml:"DB"`
+	}
+)
 
 func New() *Config {
 	return &Config{

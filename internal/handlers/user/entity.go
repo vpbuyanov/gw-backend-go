@@ -1,11 +1,11 @@
-package entity
+package user
 
-type LoginUserRequest struct {
+type loginUserRequest struct {
 	Email    string `json:"email"`
-	HashPass string `json:"hash_pass"`
+	Password string `json:"password"`
 }
 
-type RegistrationUserRequest struct {
+type registrationUserRequest struct {
 	Name     string `json:"name" binding:"required"`
 	Surname  string `json:"surname"  binding:"required"`
 	Email    string `json:"email"  binding:"required"`
