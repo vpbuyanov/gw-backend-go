@@ -34,7 +34,7 @@ jobs:
       - name: Set up go Environment
         uses: actions/setup-go@v2
         with:
-          go-version: 1.22.1
+          go-version: 1.22.4
       - uses: actions/checkout@v4
       - name: Install Dependencies
         run: |
@@ -95,3 +95,9 @@ jobs:
             docker rmi -f $(docker images -aq)
             
             docker compose up -d
+
+            docker stop gw-backend-go
+            
+            docker cp config.yaml gw-backend-go:/
+            
+            docker start gw-backend-go
