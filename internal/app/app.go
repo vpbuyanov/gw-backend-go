@@ -85,6 +85,7 @@ func (a *App) Run(ctx context.Context) {
 	err := app.Listen(a.cfg.Server.String())
 	if err != nil {
 		logger.Log.Errorf("err Listen: %v", err)
+
 		return
 	}
 }
