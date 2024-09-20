@@ -84,20 +84,14 @@ jobs:
           password: ${{ secrets.SERVER_PASS }}
           port: 22
           script: |
-            cd gw
+            cd gw-devops
             
             docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
             
-            docker stop gw-backend-go
+            docker stop backend
             
-            docker rm gw-backend-go
+            docker rm backend
             
             docker rmi -f $(docker images -aq)
             
             docker compose up -d
-
-            docker stop gw-backend-go
-            
-            docker cp config.yaml gw-backend-go:/
-            
-            docker start gw-backend-go
