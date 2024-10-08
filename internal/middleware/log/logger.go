@@ -2,6 +2,7 @@ package log
 
 import (
 	"encoding/json"
+	"fmt"
 	"time"
 	_ "time/tzdata"
 
@@ -21,7 +22,7 @@ func New() fiber.Handler {
 	return func(ctx *fiber.Ctx) error {
 		msk, err := time.LoadLocation("Europe/Moscow")
 		if err != nil {
-			return err
+			return fmt.Errorf("can not load location, err: %w", err)
 		}
 
 		start := time.Now().In(msk)
