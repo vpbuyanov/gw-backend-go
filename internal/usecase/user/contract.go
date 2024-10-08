@@ -3,6 +3,7 @@ package user
 
 import (
 	"context"
+
 	"github.com/vpbuyanov/gw-backend-go/internal/models"
 )
 
