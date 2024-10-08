@@ -25,7 +25,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-          config: .golangci.yml
+          args: run --config .golangci_critical.yml
 
   lint-critical:
     runs-on: ubuntu-latest
@@ -43,7 +43,7 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-          config: .golangci_critical.yml
+          args: run --config .golangci_critical.yml
 
   test:
     runs-on: ubuntu-latest
