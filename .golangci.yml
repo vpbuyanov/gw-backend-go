@@ -1,0 +1,77 @@
+run:
+  tests: false
+  timeout: 5m
+  build-tags: []
+  go: '1.22'
+  allow-parallel-runners: true
+
+output:
+  formats:
+    - format: tab
+  sort-results: true
+
+issues:
+  max-issues-per-linter: 75
+  max-same-issues: 5
+
+linters:
+  enable-all: false
+  enable:
+    - gomodguard
+    - dupl
+    - errname
+    - exhaustive
+    - forbidigo
+    - goconst
+    - gocritic
+    - gofmt
+    - gosec
+    - importas
+    - intrange
+    - nestif
+    - maintidx
+    - makezero
+    - misspell
+    - mnd
+    - perfsprint
+    - prealloc
+    - testpackage
+    - unconvert
+    - unparam
+    - whitespace
+    - wrapcheck
+    - usestdlibvars
+    - unused
+  disable:
+    - govet
+
+linters-settings:
+  exhaustive:
+    default-signifies-exhaustive: true
+
+  mnd:
+    checks:
+      - argument
+      - case
+      - condition
+      - operation
+      - return
+      - assign
+    ignored-functions: math.*|strconv.*|rand.*|time.*
+
+  errcheck:
+    exclude-functions:
+      - (*os.File).WriteString
+
+  wsl:
+    force-err-cuddling: true
+
+  gosec:
+    excludes:
+      - G101
+
+  nestif:
+    min-complexity: 10
+
+  gocyclo:
+    min-complexity: 40
