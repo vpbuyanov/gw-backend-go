@@ -1,17 +1,20 @@
 package token
 
 import (
-	"math/rand/v2"
+	"crypto/rand"
 
 	"github.com/vpbuyanov/gw-backend-go/internal/entity"
 )
 
 func GenerateRefreshToken() string {
-	res := make([]rune, entity.LenRefreshToken)
+	b := make([]byte, entity.LenRefreshToken)
 
-	for i := range res {
-		res[i] = entity.RefreshTokenSymbol[rand.IntN(len(entity.RefreshTokenSymbol))]
+	_, _ = rand.Read(b)
+
+	token := make([]rune, entity.LenRefreshToken)
+	for i, bytes := range b {
+		token[i] = entity.RefreshTokenSymbol[bytes%uint8(len(entity.RefreshTokenSymbol))]
 	}
 
-	return string(res)
+	return string(token)
 }
