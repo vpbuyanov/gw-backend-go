@@ -25,25 +25,6 @@ jobs:
         uses: golangci/golangci-lint-action@v3
         with:
           version: latest
-          args: run --config .golangci_critical.yml --verbose
-
-  lint-critical:
-    runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        go-version:
-          - 1.22
-
-    steps:
-      - uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-      - uses: actions/checkout@v4
-      - name: golangci-lint
-        uses: golangci/golangci-lint-action@v3
-        with:
-          version: latest
-          args: run --config .golangci_critical.yml --verbose
 
   test:
     runs-on: ubuntu-latest

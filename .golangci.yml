@@ -3,12 +3,6 @@ run:
   timeout: 5m
   build-tags: []
   go: '1.22'
-  allow-parallel-runners: true
-
-output:
-  formats:
-    - format: tab
-  sort-results: true
 
 issues:
   max-issues-per-linter: 75
@@ -18,6 +12,7 @@ linters:
   enable-all: false
   enable:
     - gomodguard
+    - goimports
     - dupl
     - errname
     - exhaustive
@@ -46,32 +41,5 @@ linters:
     - govet
 
 linters-settings:
-  exhaustive:
-    default-signifies-exhaustive: true
-
-  mnd:
-    checks:
-      - argument
-      - case
-      - condition
-      - operation
-      - return
-      - assign
-    ignored-functions: math.*|strconv.*|rand.*|time.*
-
-  errcheck:
-    exclude-functions:
-      - (*os.File).WriteString
-
-  wsl:
-    force-err-cuddling: true
-
-  gosec:
-    excludes:
-      - G101
-
-  nestif:
-    min-complexity: 10
-
-  gocyclo:
-    min-complexity: 40
+  goimports:
+    local-prefixes: "github.com/vpbuyanov/"
