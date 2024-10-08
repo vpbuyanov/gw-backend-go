@@ -12,8 +12,9 @@ func GenerateRefreshToken() string {
 	_, _ = rand.Read(b)
 
 	token := make([]rune, entity.LenRefreshToken)
-	for i, bytes := range b {
-		token[i] = entity.RefreshTokenSymbol[bytes%uint8(len(entity.RefreshTokenSymbol))]
+	for i := 0; i < entity.LenRefreshToken; i++ {
+		index := int(b[i]) % len(entity.RefreshTokenSymbol)
+		token[i] = entity.RefreshTokenSymbol[index]
 	}
 
 	return string(token)
