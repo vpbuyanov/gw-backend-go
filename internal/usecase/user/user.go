@@ -4,8 +4,10 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"github.com/vpbuyanov/gw-backend-go/internal/models"
+
 	"golang.org/x/crypto/bcrypt"
+
+	"github.com/vpbuyanov/gw-backend-go/internal/models"
 )
 
 type UCUser struct {
