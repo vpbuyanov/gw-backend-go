@@ -28,7 +28,7 @@ func (u *UCUser) Registration(ctx context.Context, request models.User) (*int, e
 
 	id, err := u.user.InsertUser(ctx, request)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("can not insert user, err: %w", err)
 	}
 
 	return id, nil

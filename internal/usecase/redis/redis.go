@@ -30,7 +30,7 @@ func (r *UCRedis) CreateRefreshToken(ctx context.Context, id int) string {
 func (r *UCRedis) CompareRefreshToken(ctx context.Context, token string) error {
 	id := r.repos.GetIDByRefreshToken(ctx, token)
 	if id == nil {
-		return entity.ErrorRefreshTokenExpire
+		return entity.ErrRefreshTokenExpire
 	}
 
 	_, err := r.user.SelectUserByID(ctx, *id)

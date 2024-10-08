@@ -7,7 +7,7 @@ const (
 )
 
 var (
-	ErrorRefreshTokenExpire = errors.New("expire refresh token")
+	ErrRefreshTokenExpire = errors.New("expire refresh token")
 )
 
 type ErrorsRequest struct {
