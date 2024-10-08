@@ -43,3 +43,7 @@ linters:
 linters-settings:
   goimports:
     local-prefixes: "github.com/vpbuyanov"
+
+  wrapcheck:
+    ignorePackageGlobs:
+      - github.com/gofiber/fiber/*
