@@ -11,6 +11,9 @@ issues:
 linters:
   enable-all: false
   enable:
+    - errcheck
+    - govet
+    - ineffassign
     - gomodguard
     - goimports
     - dupl
@@ -37,8 +40,6 @@ linters:
     - wrapcheck
     - usestdlibvars
     - unused
-  disable:
-    - govet
 
 linters-settings:
   goimports:
